@@ -1,0 +1,46 @@
+# azure-pipelines.yml
+
+trigger:
+  # Defines which branch will trigger the pipeline (e.g., main branch)
+  branches:
+    include:
+      - main  # Trigger pipeline when changes are pushed to the 'main' branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Use the latest Ubuntu image to run the pipeline
+
+variables:
+  pythonVersion: '3.9'  # Specify the Python version for the environment
+
+steps:
+  # Step 1: Checkout the repository (gets the code from GitHub)
+  - task: Checkout@2
+    displayName: 'Checkout code'
+
+  # Step 2: Set up Python environment
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(pythonVersion)  # Use the Python version specified
+      addToPath: true  # Ensure that the specified version is added to PATH
+
+  # Step 3: Install Python dependencies
+  - script: |
+      python -m venv venv  # Create a virtual environment
+      source venv/bin/activate  # Activate the virtual environment
+      pip install -r requirements.txt  # Install dependencies from requirements.txt
+    displayName: 'Install dependencies'
+
+  # Step 4: Run tests (using pytest or any testing framework you prefer)
+  - script: |
+      source venv/bin/activate  # Activate the environment
+      pytest  # Run the tests
+    displayName: 'Run tests'
+
+  # Optional Step 5: Deploy to Azure (if you want to deploy an app or model)
+  # (Replace with your specific Azure deployment task)
+  # - task: AzureWebApp@1
+  #   inputs:
+  #     azureSubscription: 'your-azure-subscription'  # Azure service connection
+  #     appName: 'your-app-name'  # Azure Web App name or any other service you deploy to
+  #     package: '$(System.DefaultWorkingDirectory)/path/to/package'  # Path to the package
+  #   displayName: 'Deploy to Azure Web App'
