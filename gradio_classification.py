@@ -17,8 +17,8 @@ import torch
 from safetensors.torch import load_file
 
 # Define the paths to your model and tokenizer files
-model_directory = "/content/drive/MyDrive/model"  # Path to the directory containing model files
-tokenizer_directory = "/content/drive/MyDrive/tokenizer"  # Path to the directory containing tokenizer files
+model_directory = "/model1.zip"  # Path to the directory containing model files
+tokenizer_directory = "/tokenizer1.zip"  # Path to the directory containing tokenizer files
 
 # Assuming your tokenizer was saved using save_pretrained
 tokenizer_path = tokenizer_directory # Update with the correct path if needed
