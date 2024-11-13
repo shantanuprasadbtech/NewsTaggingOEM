@@ -20,8 +20,8 @@
 name: Build and deploy Python app to Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: newstaggingapp # set this to the name of your Azure Web App
-  PYTHON_VERSION: '3.9'              # set this to the Python version to use
+  AZURE_WEBAPP_NAME: newstaggingapp  # Set this to the name of your Azure Web App
+  PYTHON_VERSION: '3.9'               # Set this to the Python version to use
 
 on:
   push:
@@ -36,10 +36,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python version
-        uses: actions/setup-python@v3.0.0
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
@@ -50,9 +51,11 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          source venv/bin/activate
+          pip install -r requirements.txt
 
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      # Optional: Add step to run tests here (e.g., PyTest, Django test suites, etc.)
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
@@ -69,7 +72,6 @@ jobs:
     needs: build
     environment:
       name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       - name: Download artifact from build job
@@ -82,9 +84,11 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{env.AZURE_WEBAPP_NAME}}
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          client-id: "993ce93f-da06-48af-89a6-cac94fe8412f"
-          client-secret: "U1i8Q~1xWyzpmDin8p-ox3ZJJNFkq1A~VGHDidm_"
-          tenant-id: "23035d1f-133c-44b5-b2ad-b3aef17baaa1"
-          subscription-id: "0716f762-3e58-4b56-a8e0-5da9fcd4dc87"
+          client-id: ${{ 993ce93f-da06-48af-89a6-cac94fe8412f }}
+          client-secret: ${{ U1i8Q~1xWyzpmDin8p-ox3ZJJNFkq1A~VGHDidm_ }}
+          tenant-id: ${{ 23035d1f-133c-44b5-b2ad-b3aef17baaa1 }}
+          subscription-id: ${{ 0716f762-3e58-4b56-a8e0-5da9fcd4dc87}}
+
+
