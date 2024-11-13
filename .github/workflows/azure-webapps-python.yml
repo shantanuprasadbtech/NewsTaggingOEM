@@ -16,7 +16,6 @@
 # For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
 # For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
-
 name: Build and deploy Python app to Azure Web App
 
 env:
@@ -86,9 +85,10 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          client-id: ${{ 993ce93f-da06-48af-89a6-cac94fe8412f }}
-          client-secret: ${{ U1i8Q~1xWyzpmDin8p-ox3ZJJNFkq1A~VGHDidm_ }}
-          tenant-id: ${{ 23035d1f-133c-44b5-b2ad-b3aef17baaa1 }}
-          subscription-id: ${{ 0716f762-3e58-4b56-a8e0-5da9fcd4dc87}}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
 
 
