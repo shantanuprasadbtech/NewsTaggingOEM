@@ -79,5 +79,4 @@ jobs:
         with:
           app-name: 'newsarticleclassifier'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F910504A048441A692CF2DD2A9F90B53 }}
-
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
