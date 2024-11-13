@@ -36,10 +36,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5  # Updated to v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
@@ -57,7 +57,7 @@ jobs:
       # Optional: Add step to run tests here (e.g., PyTest, Django test suites, etc.)
 
       - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4
         with:
           name: python-app
           path: |
@@ -74,10 +74,7 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: python-app
-          path: .
+        uses: actions/download-artifact@v3  # No need to change for now (still fine)
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -89,6 +86,13 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          active-directory-endpoint-url: ${{ secrets.AZURE_AD_ENDPOINT_URL }}
+          resource-manager-endpoint-url: ${{ secrets.AZURE_RESOURCE_MANAGER_URL }}
+          active-directory-graph-resource-id: ${{ secrets.AZURE_GRAPH_RESOURCE_ID }}
+          sql-management-endpoint-url: ${{ secrets.AZURE_SQL_MANAGEMENT_URL }}
+          gallery-endpoint-url: ${{ secrets.AZURE_GALLERY_URL }}
+          management-endpoint-url: ${{ secrets.AZURE_MANAGEMENT_URL }}
+
 
 
 
