@@ -18,14 +18,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2.1
         with:
           python-version: '3.9'
 
       - name: Create and start virtual environment
         run: |
           python -m venv venv
-          echo "venv" >> $GITHUB_ENV  # Add to GitHub environment variables to persist the virtual env path
           source venv/bin/activate
 
       - name: Install dependencies
@@ -63,7 +62,7 @@ jobs:
         run: unzip release.zip
 
       - name: Set up Python version for deployment
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2.1
         with:
           python-version: '3.9'
 
@@ -74,9 +73,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'newsarticleclassifier'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}  # Reference the app name from environment variable
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Reference the publish profile from secrets
