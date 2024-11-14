@@ -1,5 +1,7 @@
 # Python on Linux Web App
 # Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
+# Python on Linux Web App
+# Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
 name: Build and deploy Python app to Azure Web App
 
 on:
@@ -8,9 +10,9 @@ on:
       - main  # This will trigger the action when code is pushed to the main branch
 
 env:
-  AZURE_WEBAPP_NAME: my-app          # Set this to your Azure app name
+  AZURE_WEBAPP_NAME: newstaggingapp        # Set this to your Azure app name
   WORKING_DIRECTORY: '.'             # Path to your app's root directory
-  PYTHON_VERSION: '3.10'             # Python version to use
+  PYTHON_VERSION: '3.9'             # Python version to use
   STARTUP_COMMAND: "python -m streamlit run app.py --server.port 8000 --server.address 0.0.0.0"  # Streamlit command
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
 
       # Set up Python environment
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -36,10 +38,11 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Azure login
-      - uses: azure/login@v1
+      # Azure login using Service Principal
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_GITHUB_SECRET }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Use the Azure service principal credentials from the secret
 
       # Configure Azure Web App settings
       - uses: azure/appservice-settings@v1
@@ -47,10 +50,12 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           general-settings-json: '{"linuxFxVersion": "PYTHON|${{ env.PYTHON_VERSION }}"}'
 
-      # Deploy to Azure Web App
-      - uses: azure/webapps-deploy@v2
+      # Deploy to Azure Web App using the publish profile
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Use the publish profile secret
           package: ${{ env.WORKING_DIRECTORY }}
           startup-command: ${{ env.STARTUP_COMMAND }}
 
