@@ -12,7 +12,7 @@ on:
 #
 # 2. Change these variables for your configuration:
 env:
-  AZURE_WEBAPP_NAME: newstagging     # set this to your application's name
+  AZURE_WEBAPP_NAME: newstaggingapp     # set this to your application's name
   WORKING_DIRECTORY: '.'        # set this to the path to your path of working directory inside github repository, defaults to the repository root
   PYTHON_VERSION: '3.9'        # set the version to use
   STARTUP_COMMAND: ''           # set this to the startup command required to start the gunicorn server. default it is empty
