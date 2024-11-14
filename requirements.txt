@@ -1,3 +1,11 @@
 streamlit
 torch
 transformers
+Pillow
+numpy
+scipy
+pandas
+requests
+scikit-learn
+watchdog
+sentencepiece
