@@ -12,9 +12,9 @@ on:
       - main  # This will trigger the action when code is pushed to the main branch
 
 env:
-  AZURE_WEBAPP_NAME: my-app          # Set this to your Azure app name
+  AZURE_WEBAPP_NAME: newstaggingapp  # Correct Azure Web App name
   WORKING_DIRECTORY: '.'             # Path to your app's root directory
-  PYTHON_VERSION: '3.10'             # Python version to use (changed to 3.10)
+  PYTHON_VERSION: '3.10'             # Python version to use
   STARTUP_COMMAND: "python -m streamlit run app.py --server.port 8000 --server.address 0.0.0.0"  # Streamlit command
 
 jobs:
@@ -22,11 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
+      # Checkout the code from the repository
       - uses: actions/checkout@v3
 
-      # Set up Python environment (automatically installs the correct version)
+      # Set up Python environment
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2  # Use v2 to avoid deprecation warnings
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -42,7 +43,7 @@ jobs:
       # Azure login
       - uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Use the Azure service principal credentials from the secret
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Ensure this secret is set correctly
 
       # Configure Azure Web App settings
       - uses: azure/appservice-settings@v1
@@ -50,12 +51,11 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           general-settings-json: '{"linuxFxVersion": "PYTHON|${{ env.PYTHON_VERSION }}"}'
 
-      # Deploy to Azure Web App using the publish profile
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+      # Deploy to Azure Web App
+      - uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Use the publish profile secret
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Ensure the publish profile secret is set correctly
           package: ${{ env.WORKING_DIRECTORY }}
           startup-command: ${{ env.STARTUP_COMMAND }}
 
