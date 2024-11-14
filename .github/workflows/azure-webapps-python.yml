@@ -2,6 +2,8 @@
 # Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
 # Python on Linux Web App
 # Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
+# Python on Linux Web App
+# Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
 name: Build and deploy Python app to Azure Web App
 
 on:
@@ -10,9 +12,9 @@ on:
       - main  # This will trigger the action when code is pushed to the main branch
 
 env:
-  AZURE_WEBAPP_NAME: newstaggingapp        # Set this to your Azure app name
+  AZURE_WEBAPP_NAME: my-app          # Set this to your Azure app name
   WORKING_DIRECTORY: '.'             # Path to your app's root directory
-  PYTHON_VERSION: '3.9'             # Python version to use
+  PYTHON_VERSION: '3.10'             # Python version to use (changed to 3.10)
   STARTUP_COMMAND: "python -m streamlit run app.py --server.port 8000 --server.address 0.0.0.0"  # Streamlit command
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Set up Python environment
+      # Set up Python environment (automatically installs the correct version)
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -32,15 +34,13 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          sudo apt install python${{ env.PYTHON_VERSION }}-venv
           python -m venv antenv
           source antenv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Azure login using Service Principal
-      - name: Azure Login
-        uses: azure/login@v2
+      # Azure login
+      - uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}  # Use the Azure service principal credentials from the secret
 
