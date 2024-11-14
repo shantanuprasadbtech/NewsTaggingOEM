@@ -1,43 +1,60 @@
 # Python on Linux Web App
 # Build a Python project (using Django/Flask/Bottle frameworks) and deploy it to Azure as a Linux web app.
-name: Deploy Python package to Azure Web App as a Linux web app.
-on:
-  [push]
-# CONFIGURATION
-# For help, go to https://github.com/Azure/Actions
-# See this in-depth article on CI for Python applications: https://azure.github.io/AppService/2020/12/11/cicd-for-python-apps.html
-#
-# 1. Set up the following secrets in your repository:
-#   AZURE_CREDENTIALS_GITHUB_SECRET
-#
-# 2. Change these variables for your configuration:
-name: Deploy to Azure Web App
+name: Build and deploy Python app to Azure Web App
 
 on:
   push:
     branches:
-      - main
+      - main  # This will trigger the action when code is pushed to the main branch
+
+env:
+  AZURE_WEBAPP_NAME: my-app          # Set this to your Azure app name
+  WORKING_DIRECTORY: '.'             # Path to your app's root directory
+  PYTHON_VERSION: '3.10'             # Python version to use
+  STARTUP_COMMAND: "python -m streamlit run app.py --server.port 8000 --server.address 0.0.0.0"  # Streamlit command
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
+    environment: dev
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Set up Python (or Node.js, etc.)
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      # Set up Python environment
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt  # For Python apps, or npm install for Node.js apps
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          sudo apt install python${{ env.PYTHON_VERSION }}-venv
+          python -m venv antenv
+          source antenv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: newstaggingapp
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: . # The directory or zip file containing the application
+      # Azure login
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_GITHUB_SECRET }}
+
+      # Configure Azure Web App settings
+      - uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          general-settings-json: '{"linuxFxVersion": "PYTHON|${{ env.PYTHON_VERSION }}"}'
+
+      # Deploy to Azure Web App
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.WORKING_DIRECTORY }}
+          startup-command: ${{ env.STARTUP_COMMAND }}
+
+      # Logout of Azure
+      - name: Logout of Azure
+        run: |
+          az logout
