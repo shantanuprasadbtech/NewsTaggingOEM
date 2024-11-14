@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'newstaggingapp'  # Replace with the actual Azure Web App name
+  AZURE_WEBAPP_NAME: 'newsarticleclassifier'  # Replace with the actual Azure Web App name
 
 jobs:
   build:
