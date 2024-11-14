@@ -78,3 +78,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}  # Reference the app name from environment variable
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Reference the publish profile from secrets
+
