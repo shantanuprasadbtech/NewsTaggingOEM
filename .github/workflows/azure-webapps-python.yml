@@ -36,7 +36,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}  # Use the same version from env
+          python-version: ${{ env.PYTHON_VERSION }}  # Use the version set in env
 
       - name: Create and start virtual environment
         run: |
@@ -80,7 +80,7 @@ jobs:
       - name: Set up Python version for deployment
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}  # Ensure version consistency here
+          python-version: ${{ env.PYTHON_VERSION }}  # Use the version set in env
 
       - name: Install dependencies in production environment
         run: |
@@ -94,7 +94,7 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           general-settings-json: '{"linuxFxVersion": "PYTHON|${{ env.PYTHON_VERSION }}"}'
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
